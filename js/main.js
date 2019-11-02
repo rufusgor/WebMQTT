@@ -651,7 +651,10 @@ $("#btn_broker_connect").on("click", function(){
     client.onConnectionLost = onConnectionLost;
     client.onMessageArrived = onMessageArrived;
 
-    client.connect({onSuccess:onConnect});
+    client.connect({
+      useSSL: true,
+      onSuccess:onConnect
+    });
   
    
      
