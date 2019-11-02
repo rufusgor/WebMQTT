@@ -445,10 +445,6 @@ $("#btn_broker_connect").on("click", function(){
     if(typeof(broker_connection["broker_cleansession"]) !== "undefined"){
       options.cleanSession = broker_connection["broker_cleansession"];
     }
-
-    if(typeof(broker_connection["broker_ssl"]) !== "undefined"){
-      options.useSSL = broker_connection["broker_ssl"];
-    }
     options.userName = broker_connection["broker_username"];
     options.password = broker_connection["broker_password"];
     options.willMessage = willmessage;
