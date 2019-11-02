@@ -423,14 +423,14 @@ $("#btn_broker_connect").on("click", function(){
 
     save_broker_connection();//Save broker connection data and reload it to broker connection object
 
-    client = new Paho.MQTT.Client(broker_connection["broker_address"], Number(broker_connection["broker_port"]), broker_connection["broker_client_id"]);
+    client = new Paho.Client(broker_connection["broker_address"], Number(broker_connection["broker_port"]), broker_connection["broker_client_id"]);
 
     // set callback handlers
     client.onConnectionLost = onConnectionLost;
     client.onMessageArrived = onMessageArrived;
 
   
-    var willmessage = new Paho.MQTT.Message(broker_connection["broker_lwat_message"]);
+    var willmessage = new Paho.Message(broker_connection["broker_lwat_message"]);
     willmessage.destinationName = broker_connection["broker_lwat_topic"];
     willmessage.qos = Number(broker_connection["broker_lwat_qos"]);
     if(typeof(broker_connection["broker_lwat_retain"]) !== "undefined"){
@@ -735,7 +735,7 @@ function onMessageArrived(message) {
       var ui_node = this;
 
       if(ui_node.type=="button"){
-        var message = new Paho.MQTT.Message(ui_node.message);
+        var message = new Paho.Message(ui_node.message);
         message.destinationName = ui_node.path;
         client.send(message);
       }
@@ -757,7 +757,7 @@ function onMessageArrived(message) {
         var ui_node = this;
   
         if(ui_node.type=="input_text"){
-          var message = new Paho.MQTT.Message(input_message);
+          var message = new Paho.Message(input_message);
           message.destinationName = ui_node.path;
           client.send(message);
         }
@@ -780,11 +780,11 @@ function onMessageArrived(message) {
   
       if(ui_node.type=="switch"){
         if($(checkbox).is(":checked")){
-          var message = new Paho.MQTT.Message(ui_node.message_on);
+          var message = new Paho.Message(ui_node.message_on);
           message.destinationName = ui_node.path;
           client.send(message);
         }else{
-          var message = new Paho.MQTT.Message(ui_node.message_off);
+          var message = new Paho.Message(ui_node.message_off);
           message.destinationName = ui_node.path;
           client.send(message);
         }
@@ -802,7 +802,7 @@ function onMessageArrived(message) {
     });
     $.each(message_nodes, function(){
       var ui_node = this;
-      var message =  new Paho.MQTT.Message("#"+$(colorpicker).val());
+      var message =  new Paho.Message("#"+$(colorpicker).val());
       message.destinationName = ui_node.path;
       client.send(message);
     });
@@ -818,7 +818,7 @@ function onMessageArrived(message) {
     });
     $.each(message_nodes, function(){
       var ui_node = this;
-      var message =  new Paho.MQTT.Message($(slider).val());
+      var message =  new Paho.Message($(slider).val());
       message.destinationName = ui_node.path;
       client.send(message);
     });
