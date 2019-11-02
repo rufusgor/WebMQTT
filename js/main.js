@@ -448,7 +448,7 @@ $("#btn_broker_connect").on("click", function(){
     options.userName = broker_connection["broker_username"];
     options.password = broker_connection["broker_password"];
     options.willMessage = willmessage;
-    opetions.useSSL = true;
+    options.useSSL = true;
 
     client.connect(options);
 
