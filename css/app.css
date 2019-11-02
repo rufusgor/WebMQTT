@@ -12,7 +12,9 @@
       vertical-align: middle;
     }
     
-    
+    .btn_delete_ui_node:hover{
+        color:black;
+    }
     
     .slider {
       -webkit-appearance: none;

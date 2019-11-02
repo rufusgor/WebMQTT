@@ -1,245 +1,5 @@
 $(function () {
 
-/*json_ui = {
-  "nodes": [
-    {
-      "id": 1,
-      "type": "button",
-      "text": "Turn on LED1",
-      "message": "ON",
-      "path": "rundebugrepeat/test/LED1",
-      "pos_x": 0,
-      "pos_y": 32
-    },
-    {
-      "id": 2,
-      "type": "button",
-      "text": "Turn on LED2",
-      "message": "ON",
-      "path": "rundebugrepeat/test/LED2",
-      "pos_x": 0,
-      "pos_y": 82
-    },
-    {
-      "id": 3,
-      "type": "button",
-      "text": "Turn off LED1",
-      "message": "OFF",
-      "path": "rundebugrepeat/test/LED1",
-      "pos_x": 210,
-      "pos_y": 32
-    },
-    {
-      "id": 4,
-      "type": "button",
-      "text": "Turn off LED2",
-      "message": "OFF",
-      "path": "rundebugrepeat/test/LED2",
-      "pos_x": 210,
-      "pos_y": 82
-    },
-    {
-      "id": 5,
-      "type": "label",
-      "text": "LED Controll with buttons",
-      "pos_x": 100,
-      "pos_y": 0
-    },
-    {
-      "id": 6,
-      "type": "label",
-      "text": "LED controll with switches",
-      "pos_x": 100,
-      "pos_y": 130
-    },
-
-    {
-      "id": 7,
-      "type": "label",
-      "text": "LED 1",
-      "pos_x": 35,
-      "pos_y": 177
-    },
-
-    {
-      "id": 8,
-      "type": "switch",
-      "message_on": "ON",
-      "message_off": "OFF",
-      "path": "rundebugrepeat/test/LED1",
-      "pos_x": 85,
-      "pos_y": 177
-    },
-
-    {
-      "id": 9,
-      "type": "label",
-      "text": "LED 2",
-      "pos_x": 150,
-      "pos_y": 177
-    },
-
-    {
-      "id": 10,
-      "type": "switch",
-      "message_on": "ON",
-      "message_off": "OFF",
-      "path": "rundebugrepeat/test/LED2",
-      "pos_x": 200,
-      "pos_y": 177
-    },
-    {
-      "id": 11,
-      "type": "label",
-      "text": "Raw Input controll (Temperature test)",
-      "pos_x": 100,
-      "pos_y": 210
-    },
-
-    {
-      "id": 12,
-      "type": "input_text",
-      "path": "rundebugrepeat/test/Temperature",
-      "pos_x": 80,
-      "pos_y": 240
-    },
-
-    {
-      "id": 13,
-      "type": "label",
-      "text": "Control RGB LED with sliders",
-      "pos_x": 0,
-      "pos_y": 280
-    },
-
-    {
-      "id": 14,
-      "type": "label",
-      "text": "Control RGB LED with ColorPicker",
-      "pos_x": 220,
-      "pos_y": 280
-    },
-    {
-      "id": 15,
-      "type": "label",
-      "text": "R:",
-      "pos_x": 0,
-      "pos_y": 320
-    },
-
-    {
-      "id": 16,
-      "type": "label",
-      "text": "G:",
-      "pos_x": 0,
-      "pos_y": 360
-    },
-
-    {
-      "id": 17,
-      "type": "label",
-      "text": "B:",
-      "pos_x": 0,
-      "pos_y": 400
-    },
-
-    {
-      "id": 18,
-      "type": "slider",
-      "path": "rundebugrepeat/test/RGB/R",
-      "pos_x": 30,
-      "pos_y": 320,
-      "value_min": 0,
-      "value_max": 255
-    },
-    {
-      "id": 19,
-      "type": "slider",
-      "path": "rundebugrepeat/test/RGB/G",
-      "pos_x": 30,
-      "pos_y": 360,
-      "value_min": 0,
-      "value_max": 255
-    },
-    {
-      "id": 20,
-      "type": "slider",
-      "path": "rundebugrepeat/test/RGB/B",
-      "pos_x": 30,
-      "pos_y": 400,
-      "value_min": 0,
-      "value_max": 255
-    },
-
-    {
-      "id": 21,
-      "type": "colorpicker",
-      "path": "rundebugrepeat/test/RGB",
-      "pos_x": 220,
-      "pos_y": 320
-    },
-
-    
-    {
-      "id": 22,
-      "type": "label",
-      "text": "Temperature and humidity gauges",
-      "pos_x": 600,
-      "pos_y": 10
-    },
-
-    {
-      "id": 23,
-      "type": "label",
-      "text": "Temperature and humidity chart",
-      "pos_x": 600,
-      "pos_y": 200
-    },
-
-    {
-      "id": 24,
-      "type": "gauge",
-      "text": "Temperature(°C)",
-      "path": "rundebugrepeat/test/Temperature",
-      "pos_x": 450,
-      "pos_y": 40,
-      "value_min": 0,
-      "value_max": 100
-    },
-    {
-      "id": 25,
-      "type": "gauge",
-      "text": "Humidity(%)",
-      "path": "rundebugrepeat/test/Humidity",
-      "pos_x": 650,
-      "pos_y": 40,
-      "value_min": 0,
-      "value_max": 100
-    },
-
-    {
-      "id": 26,
-      "type": "chart",
-      "text": "Temperature [°C]",
-      "path": "rundebugrepeat/test/Temperature",
-      "pos_x": 480,
-      "pos_y": 250,
-      "value_min": 0,
-      "value_max": 40
-    },    
-    {
-      "id": 27,
-      "type": "chart",
-      "text": "Humidity [%]",
-      "path": "rundebugrepeat/test/Humidity",
-      "pos_x": 980,
-      "pos_y": 250,
-      "value_min": 0,
-      "value_max": 100
-    },
-  ]
-}*/
-
 //Android Webview Object.Values fix....
 Object.values = (obj) => Object.keys(obj).map(key => obj[key]);
 
@@ -271,13 +31,26 @@ if (localDB_broker_connection != null){
   console.log(broker_connection);
 }
 
-console.log(Object.values(broker_connection));
+//console.log(Object.values(broker_connection));
 
 //populate broker connection form data from broker connection object
 
 
 $.each(Object.keys(broker_connection), function(index){
-  $("#form_broker_connection").find("input[name="+this+"]").val(Object.values(broker_connection)[index]);
+
+  var element = $("#form_broker_connection").find("[name="+this+"]");
+  if($(element).is("input")){
+    if($(element).prop("type") == "checkbox"){ //checkbox input
+      $(element).prop("checked", Object.values(broker_connection)[index]);
+    }else{ //text input
+      $(element).val(Object.values(broker_connection)[index]);
+    }
+  }
+  
+  if($(element).is("select")){//select
+    $(element).val(Object.values(broker_connection)[index]);
+  }
+  //.val(Object.values(broker_connection)[index]);
   
 });
 
@@ -287,6 +60,11 @@ $.each(Object.keys(broker_connection), function(index){
 function save_broker_connection(){
   var broker_connection_object = {};
   $.each($("#form_broker_connection").serializeArray(), function(_, kv) {
+    if(kv.name == "broker_cleansession" || kv.name == "broker_ssl" || kv.name == "broker_lwat_retain"){
+      if(kv.value == "on"){
+        kv.value = true;
+      }
+    }
     broker_connection_object[kv.name] = kv.value;
   });
   localStorage.setItem("broker_connection", JSON.stringify(broker_connection_object));
@@ -430,13 +208,13 @@ function ui_add_element(ui_node){
   
   
   html += `<div class="ui_div_helper btn-group float-right">
-            <button class="btn btn-transparent dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-transparent btn_edit_ui_node" data-node-id="`+ui_node.id+`" data-toggle="modal" data-target="#modal_add_new_ui_node"aria-haspopup="true" aria-expanded="false">
               <i class="icon-settings"></i>
             </button>
-            <div class="dropdown-menu dropdown-menu-right">
-              <a class="dropdown-item btn_edit_ui_node" data-node-id="`+ui_node.id+`" data-toggle="modal" data-target="#modal_add_new_ui_node" href="#!">Edit node</a>
-              <a class="dropdown-item btn_delete_ui_node" data-node-id="`+ui_node.id+`" href="#!">Delete node</a>
-            </div>
+            <button class="btn btn-transparent btn_delete_ui_node" data-node-id="`+ui_node.id+`" >
+              <i class="icon-trash" style="color:red;"></i>
+            </button>
+
           </div>
         </div>
       </div>`;
@@ -651,16 +429,36 @@ $("#btn_broker_connect").on("click", function(){
     client.onConnectionLost = onConnectionLost;
     client.onMessageArrived = onMessageArrived;
 
-    client.connect({
-      useSSL: true,
-      onSuccess:onConnect
-    });
   
-   
-     
-    
+    var willmessage = new Paho.MQTT.Message(broker_connection["broker_lwat_message"]);
+    willmessage.destinationName = broker_connection["broker_lwat_topic"];
+    willmessage.qos = Number(broker_connection["broker_lwat_qos"]);
+    if(typeof(broker_connection["broker_lwat_retain"]) !== "undefined"){
+      willmessage.retained = broker_connection["broker_lwat_retain"];
+    }
 
+    var options={};
 
+    options.onSuccess = onConnect;
+    options.keepAliveInterval=Number(broker_connection["broker_keepalive"]);
+
+    if(typeof(broker_connection["broker_cleansession"]) !== "undefined"){
+      options.cleanSession = broker_connection["broker_cleansession"];
+    }
+
+    if(typeof(broker_connection["broker_ssl"]) !== "undefined"){
+      options.useSSL = broker_connection["broker_ssl"];
+    }
+    options.userName = broker_connection["broker_username"];
+    options.password = broker_connection["broker_password"];
+    options.willMessage = willmessage;
+
+    client.connect(options);
+
+});
+
+$("#btn_broker_disconnect").on("click", function(){
+  client.disconnect();
 });
 
 // called when the client connects
@@ -681,12 +479,8 @@ function onConnect() {
       //console.log("[CLIENT] - Subscribed to path: "+ui_node.path);
     }
   });
-
-
- // message = new Paho.MQTT.Message("Hello");
-  //message.destinationName = "rundebugrepeat/test/Temperature";
-  //client.send(message);
-
+  $("#btn_broker_connect").css("display","none");
+  $("#btn_broker_disconnect").css("display","");
 }
 
 // called when the client loses its connection
@@ -695,6 +489,9 @@ function onConnectionLost(responseObject) {
     console.log("onConnectionLost:"+responseObject.errorMessage);
     modal("Client disconnected: "+responseObject.errorMessag);
   }
+  modal("Client disconnected");
+  $("#btn_broker_connect").css("display","");
+  $("#btn_broker_disconnect").css("display","none");
 }
 
 // called when a message arrives
