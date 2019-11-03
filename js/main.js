@@ -61,7 +61,7 @@ $.each(Object.keys(broker_connection), function(index){
 function save_broker_connection(){
   var broker_connection_object = {};
   $.each($("#form_broker_connection").serializeArray(), function(_, kv) {
-    if(kv.name == "broker_cleansession" || kv.name == "broker_ssl" || kv.name == "broker_lwat_retain"){
+    if(kv.name == "broker_cleansession" || kv.name == "broker_useSSL" || kv.name == "broker_lwat_retain"){
       if(kv.value == "on"){
         kv.value = true;
       }
@@ -446,10 +446,13 @@ $("#btn_broker_connect").on("click", function(){
     if(typeof(broker_connection["broker_cleansession"]) !== "undefined"){
       options.cleanSession = broker_connection["broker_cleansession"];
     }
+
+    if(typeof(broker_connection["broker_useSSL"]) !== "undefined"){
+      options.useSSL = broker_connection["broker_useSSL"];
+    }
     options.userName = broker_connection["broker_username"];
     options.password = broker_connection["broker_password"];
     options.willMessage = willmessage;
-    options.useSSL = true;
     options.onFailure = onFail;
     client.connect(options);
 
