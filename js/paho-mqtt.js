@@ -2017,7 +2017,7 @@ function onMessageArrived(message) {
 							var port = connectOptions.ports[i];
 
 							var ipv6 = (host.indexOf(":") !== -1);
-							uri = "wss://"+(ipv6?"["+host+"]":host)+":"+port+path;
+							uri = "ws://"+(ipv6?"["+host+"]":host)+":"+port+path;
 							connectOptions.uris.push(uri);
 						}
 					} else {
