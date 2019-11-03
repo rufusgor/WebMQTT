@@ -1,3 +1,4 @@
+
 $(function () {
 
 //Android Webview Object.Values fix....
@@ -449,7 +450,7 @@ $("#btn_broker_connect").on("click", function(){
     options.password = broker_connection["broker_password"];
     options.willMessage = willmessage;
     options.useSSL = true;
-
+    options.onFailure = onFail;
     client.connect(options);
 
 });
@@ -457,6 +458,10 @@ $("#btn_broker_connect").on("click", function(){
 $("#btn_broker_disconnect").on("click", function(){
   client.disconnect();
 });
+
+function onFail(context) {
+  console.log("ERROR", "Failed to connect. [Error Message: ", context.errorMessage, "]");
+}
 
 // called when the client connects
 function onConnect() {
