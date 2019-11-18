@@ -424,8 +424,12 @@ $("#btn_broker_connect").on("click", function(){
 
     save_broker_connection();//Save broker connection data and reload it to broker connection object
 
-    client = new Paho.Client(broker_connection["broker_address"], Number(broker_connection["broker_port"]), broker_connection["broker_client_id"]);
+    //client = new Paho.Client(broker_connection["broker_address"], Number(broker_connection["broker_port"]), broker_connection["broker_client_id"]);
+    //client = new Paho.Client("ws://"+broker_connection["broker_address"]+":"+broker_connection["broker_port"], broker_connection["broker_client_id"]);
+    
+    /*client = new Paho.Client("mqtt.eclipse.org", 443, "/mqtt", "random_client_id_sadasad");
 
+   
     // set callback handlers
     client.onConnectionLost = onConnectionLost;
     client.onMessageArrived = onMessageArrived;
@@ -455,6 +459,56 @@ $("#btn_broker_connect").on("click", function(){
     options.willMessage = willmessage;
     options.onFailure = onFail;
     client.connect(options);
+    */
+    
+    
+    client = new Paho.Client(broker_connection["broker_address"], Number(broker_connection["broker_port"]), broker_connection["broker_path"], broker_connection["broker_client_id"]);
+   
+    // set callback handlers
+    client.onConnectionLost = onConnectionLost;
+    client.onMessageArrived = onMessageArrived;
+
+
+    var options = {
+      //invocationContext: { host: "mqtt.eclipse.org", port: 443, path: "/mqtt", clientId: "random_client_id_sadasad" },
+      timeout: 60,
+      keepAliveInterval: Number(broker_connection["broker_keepalive"]),
+      onSuccess: onConnect,
+      onFailure: onFail
+    };
+
+    
+    if(typeof(broker_connection["broker_cleansession"]) !== "undefined"){
+      options.cleanSession = broker_connection["broker_cleansession"];
+    }
+
+    if(typeof(broker_connection["broker_useSSL"]) !== "undefined"){
+      options.useSSL = broker_connection["broker_useSSL"];
+    }
+
+    var willmessage = new Paho.Message(broker_connection["broker_lwat_message"]);
+    willmessage.destinationName = broker_connection["broker_lwat_topic"];
+    willmessage.qos = Number(broker_connection["broker_lwat_qos"]);
+    if(typeof(broker_connection["broker_lwat_retain"]) !== "undefined"){
+      willmessage.retained = broker_connection["broker_lwat_retain"];
+    }
+
+    if(typeof(broker_connection["broker_cleansession"]) !== "undefined"){
+      options.cleanSession = broker_connection["broker_cleansession"];
+    }
+
+    if(typeof(broker_connection["broker_useSSL"]) !== "undefined"){
+      options.useSSL = broker_connection["broker_useSSL"];
+    }
+    options.userName = broker_connection["broker_username"];
+    options.password = broker_connection["broker_password"];
+    options.willMessage = willmessage;
+
+    client.connect(options);
+
+    
+    // connect the client
+    client.connect(options);
 
 });
 
@@ -469,7 +523,6 @@ function onFail(context) {
 // called when the client connects
 function onConnect() {
   // Once a connection has been made, make a subscription and send a message.
-  console.log("onConnect");
   modal("Client connected");
   //client.subscribe("rundebugrepeat/test/Temperature");
   
@@ -829,5 +882,6 @@ function onMessageArrived(message) {
     });
     modal("Slider: Message sent");
   });
+
   
 });
