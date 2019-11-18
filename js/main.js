@@ -461,8 +461,12 @@ $("#btn_broker_connect").on("click", function(){
     client.connect(options);
     */
     
-    
-    client = new Paho.Client(broker_connection["broker_address"], Number(broker_connection["broker_port"]), broker_connection["broker_path"], broker_connection["broker_client_id"]);
+   if(broker_connection["broker_path"] != ""){
+    client = new Paho.Client(broker_connection["broker_address"], Number(broker_connection["broker_port"]),broker_connection["broker_path"],  broker_connection["broker_client_id"]);
+   }else{
+    client = new Paho.Client(broker_connection["broker_address"], Number(broker_connection["broker_port"]),  broker_connection["broker_client_id"]);
+   }
+   
    
     // set callback handlers
     client.onConnectionLost = onConnectionLost;
@@ -470,13 +474,12 @@ $("#btn_broker_connect").on("click", function(){
 
 
     var options = {
-      //invocationContext: { host: "mqtt.eclipse.org", port: 443, path: "/mqtt", clientId: "random_client_id_sadasad" },
-      timeout: 60,
+     // invocationContext: { host: broker_connection["broker_address"], port: Number(broker_connection["broker_port"]), path: broker_connection["broker_path"], clientId: broker_connection["broker_client_id"] },
+      timeout: 600,
       keepAliveInterval: Number(broker_connection["broker_keepalive"]),
       onSuccess: onConnect,
       onFailure: onFail
     };
-
     
     if(typeof(broker_connection["broker_cleansession"]) !== "undefined"){
       options.cleanSession = broker_connection["broker_cleansession"];
@@ -486,12 +489,16 @@ $("#btn_broker_connect").on("click", function(){
       options.useSSL = broker_connection["broker_useSSL"];
     }
 
-    var willmessage = new Paho.Message(broker_connection["broker_lwat_message"]);
-    willmessage.destinationName = broker_connection["broker_lwat_topic"];
-    willmessage.qos = Number(broker_connection["broker_lwat_qos"]);
-    if(typeof(broker_connection["broker_lwat_retain"]) !== "undefined"){
-      willmessage.retained = broker_connection["broker_lwat_retain"];
+    if(broker_connection["broker_lwat_topic"] != "" && broker_connection["broker_lwat_message"] != ""){
+      var willmessage = new Paho.Message(broker_connection["broker_lwat_message"]);
+      willmessage.destinationName = broker_connection["broker_lwat_topic"];
+      willmessage.qos = Number(broker_connection["broker_lwat_qos"]);
+      if(typeof(broker_connection["broker_lwat_retain"]) !== "undefined"){
+        willmessage.retained = broker_connection["broker_lwat_retain"];
+      }
+      options.willMessage = willmessage;
     }
+    
 
     if(typeof(broker_connection["broker_cleansession"]) !== "undefined"){
       options.cleanSession = broker_connection["broker_cleansession"];
@@ -502,12 +509,7 @@ $("#btn_broker_connect").on("click", function(){
     }
     options.userName = broker_connection["broker_username"];
     options.password = broker_connection["broker_password"];
-    options.willMessage = willmessage;
 
-    client.connect(options);
-
-    
-    // connect the client
     client.connect(options);
 
 });
