@@ -12,6 +12,9 @@ var form_ui_node_mode = ""; //edit: edit node; new: new node;
 var selected_node_id = "";
 var ui_edit_enabled = false;
 
+//ckEditor init
+CKEDITOR.replace('ckEditor_html5_add');
+
 var json_ui = {};
 //Load from local storage
 var localDB_json_ui = JSON.parse(localStorage.getItem("json_ui"));
@@ -162,10 +165,14 @@ function ui_add_element(ui_node){
           html += ui_node.text +`<br>`;
       break;
 
+      case "html":
+        html += ui_node.html +`<br>`;
+       break;
+
       case "switch":
           html += `<label class="switch switch-label switch-pill switch-primary">
-          <input id="switch_`+ui_node.id+`"" class="ui_switch switch-input" type="checkbox" data-node-id="`+ui_node.id+`">
-          <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
+         <input id="switch_`+ui_node.id+`"" class="ui_switch switch-input" type="checkbox" data-node-id="`+ui_node.id+`">
+         <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
         </label>
         <br>`
       break;
@@ -677,16 +684,31 @@ function onMessageArrived(message) {
     //populate input values from node data
     
     $.each(Object.keys(ui_node), function(index){
-      $("#tab_add_"+ui_node.type).find("input[name="+this+"]").val(Object.values(ui_node)[index]);
+      switch(ui_node.type){
+        case "html":
+            CKEDITOR.instances.ckEditor_html5_add.setData(ui_node.html); 
+        break;
+        default:
+            $("#tab_add_"+ui_node.type).find("input[name="+this+"]").val(Object.values(ui_node)[index]);
+        break;
+      }
+      
     });
     
 
   });
 
+  console.log(CKEDITOR.instances);
+
   //Form Add ui element or edit value
   $(".form_add_ui_element").on("submit",function(event){
     event.preventDefault();
+    for (var i in CKEDITOR.instances) {
+      CKEDITOR.instances[i].updateElement();
+    };
+    
     var formdata = $(this).serializeArray();
+    console.log(formdata);
 
     switch (form_ui_node_mode){
       case "new": //New node
@@ -733,15 +755,25 @@ function onMessageArrived(message) {
 
             }
             $.each(json_ui.nodes[index], function(name, value){
-              var input = $("#tab_add_"+ui_node.type).find("input[name="+name+"]");
-              console.log(input);
-              if(input.length>0){ //Only change that key where input is found
-                if (!isNaN(  $("#tab_add_"+ui_node.type).find("input[name="+name+"]").val())) { //check if value is convertible to number
-                  json_ui.nodes[index][name] = Number($("#tab_add_"+ui_node.type).find("input[name="+name+"]").val());
-                } else {
-                  json_ui.nodes[index][name] = $("#tab_add_"+ui_node.type).find("input[name="+name+"]").val();
-                }
+              switch(ui_node.type){
+                case "html":
+                    console.log(json_ui.nodes[index]);
+                    json_ui.nodes[index].html = CKEDITOR.instances.ckEditor_html5_add.getData();
+                break;
+
+                default:
+                    var input = $("#tab_add_"+ui_node.type).find("input[name="+name+"]");
+                    console.log(input);
+                    if(input.length>0){ //Only change that key where input is found
+                      if (!isNaN(  $("#tab_add_"+ui_node.type).find("input[name="+name+"]").val())) { //check if value is convertible to number
+                        json_ui.nodes[index][name] = Number($("#tab_add_"+ui_node.type).find("input[name="+name+"]").val());
+                      } else {
+                        json_ui.nodes[index][name] = $("#tab_add_"+ui_node.type).find("input[name="+name+"]").val();
+                      }
+                    }
+                break;
               }
+             
 
               //Unsubscribe if no other node subscribed to this path
               var message_nodes = json_ui.nodes.filter(function(ui_node) {//Are there any nodes in the same path remaining?

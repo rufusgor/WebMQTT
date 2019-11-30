@@ -99,7 +99,7 @@
                       </div>
                       <div class= "col-sm-1">
                           <label>Keep Alive</label>
-                          <input class="form-control" name="broker_keepalive" type="number" value=60>
+                          <input class="form-control" name="broker_keepalive" type="number" value=30>
                       </div>
                       <div class= "col-sm-2">
                           <label>Clean Session</label>
@@ -172,6 +172,10 @@
                     <i class="fa fa-font"></i> Label</a>
                   </li>
                   <li class="nav-item">
+                    <a class="nav-link tab_nav_ui_node" data-type="html" data-toggle="tab" href="#tab_add_html" role="tab" aria-selected="true">
+                    <i class="fa fa-html5"></i> HTML</a>
+                  </li>
+                  <li class="nav-item">
                     <a class="nav-link tab_nav_ui_node" data-type="button" data-toggle="tab" href="#tab_add_button" role="tab">
                     <i class="fa fa-mouse-pointer"></i> Button</a>
                   </li>
@@ -212,6 +216,20 @@
                               <i class="fa fa-user"></i>
                             </span>
                           </div>
+                        </div>
+                      </div>      
+                      <div class="form-group form-actions">
+                        <button class="btn btn-sm btn-secondary" type="submit">Submit</button>
+                      </div>
+                    </form> 
+                  </div>
+                  <div class="tab-pane" id="tab_add_html">
+                    <form class="form_add_ui_element">
+                      <input class="form-control" type="hidden" name="type" value="html"> 
+                      <div class="form-group">
+                        <div class="input-group">
+                         <textarea id="ckEditor_html5_add" name="html"></textarea>
+                          
                         </div>
                       </div>      
                       <div class="form-group form-actions">
@@ -504,6 +522,8 @@
     <script src="js/charts.js"></script>
 
     <script src="js/paho-mqtt.js"></script>
+
+    <script src="//cdn.ckeditor.com/4.13.0/full/ckeditor.js"></script>
   
 
     <!-- Interact.JS App -->
