@@ -26,6 +26,7 @@
     <link href="css/style.css" rel="stylesheet">
     <link href="css/app.css" rel="stylesheet">
     <link href="css/pace.min.css" rel="stylesheet"> 
+    <link href="css/fontawesome-iconpicker.min.css" rel="stylesheet">
   </head>
   <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
     <header class="app-header navbar">
@@ -41,463 +42,38 @@
           <ul class="nav">
             <li class="nav-item">
               <a class="nav-link" href="index.html">
-                <i class="nav-icon icon-home"></i> Dashboard
+                <i class="nav-icon icon-home"></i> Home
+              </a>
+            </li>
+            <li class="nav-item nav-dropdown">
+              <a class="nav-link nav-dropdown-toggle" href="#">
+                <i class="nav-icon icon-cursor"></i> Tutorials</a>
+              <ul class="nav-dropdown-items">
+                <li class="nav-item">
+                  <a class="nav-link" href="buttons/buttons.html">
+                    <i class="nav-icon icon-cursor"></i> Basic Connection</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-title">Clients</li>
+            <span id="sidemenu_client_list">
+            </span>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="modal" data-target="#modal_add_client" href="#">
+                <i class="nav-icon icon-plus"></i> Add Client
               </a>
             </li>
             
+           
           </ul>
         </nav>
         <button class="sidebar-minimizer brand-minimizer" type="button"></button>
       </div>
       <div class="main" id="main">      
-        <!-- Breadcrumb-->
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item">Home</li>
-        </ol>
-      
-        <div class="content container-fluid" style="position:relative; margin:10px; padding:0px; background-color:white;">
-          <ul class="nav nav-tabs" id="myTab1" role="tablist">
-            <li class="nav-item">
-              <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Connect</a>
-            </li>
-          </ul>
-          <div class="tab-content" id="myTab1Content">
-            <div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
-              <form id="form_broker_connection">
-                  <div class="row">
-                    <div class= "col-sm-3">
-                      <label>Broker address</label>
-                      <input class="form-control" name="broker_address" type="text" placeholder="Broker Address">
-                    </div>
-                    <div class= "col-sm-1">
-                      <label>Port</label>
-                      <input class="form-control" name="broker_port" type="number" placeholder="Broker Port">
-                    </div>
-                    <div class= "col-sm-2">
-                      <label>Path</label>
-                      <input class="form-control" name="broker_path" type="text" placeholder="Broker Path">
-                    </div>
-                    <div class= "col-sm-3">
-                      <label>Client Id</label>
-                      <input class="form-control" name="broker_client_id" type="text" placeholder="Client ID">
-                    </div>
-                    <div class= "col-sm-3">
-                      <label>Connection</label>
-                      <button id="btn_broker_connect" class="btn btn-block btn-primary" type="button" style="width:200px; ">Connect</button>
-                      <button id="btn_broker_disconnect" class="btn btn-block btn-danger" type="button" style="width:200px; display:none; margin-top:0px; ">Disconnect</button>
-
-                    </div>
-                  </div>
-                  <div class="row">
-                      <div class= "col-sm-2">
-                          <label>Username</label>
-                          <input class="form-control" name="broker_username" type="text" placeholder="Username">
-                      </div>
-                      <div class= "col-sm-2">
-                          <label>Password</label>
-                          <input class="form-control" name="broker_password" type="password" placeholder="password">
-                      </div>
-                      <div class= "col-sm-1">
-                          <label>Keep Alive</label>
-                          <input class="form-control" name="broker_keepalive" type="number" value=30>
-                      </div>
-                      <div class= "col-sm-2">
-                          <label>Clean Session</label>
-                          <input class="form-control" name="broker_cleansession" type="checkbox">
-                      </div>
-                      <div class= "col-sm-2">
-                        <label>Use SSL</label>
-                        <input class="form-control" name="broker_useSSL" type="checkbox">
-                    </div>
-                  </div>
-                  <div class="row">
-                      <div class= "col-sm-3">
-                          <label>Last-Will Topic</label>
-                          <input class="form-control" name="broker_lwat_topic" type="text" placeholder="Last Will Topic Path">
-                      </div>
-                      <div class= "col-sm-3">
-                          <label>Last-Will Message</label>
-                          <input class="form-control" name="broker_lwat_message" type="text" placeholder="Last Will Topic Message">
-                      </div>
-                      <div class="col-sm-2">
-                        <label>Last-Will QoS</label>
-                        <select class="form-control"  name="broker_lwat_qos">
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                          </select>
-                      </div>
-                      <div class= "col-sm-2">
-                          <label>Last-Will Retain</label>
-                          <input class="form-control" name="broker_lwat_retain" type="checkbox">
-                      </div>
-                  </div>
-                </form>
-            </div>
-          </div>
-        </div>
-        <div class="container-fluid" style="position:relative; margin:10px; padding:0px; border-bottom: 2px solid black; background-color:white;">
-                
-                <!-- Breadcrumb-->
-          
-                  <div class="btn-group" role="group" aria-label="Button group">
-                    <a id="btn_add_new_ui_element" class="btn" data-toggle="modal" data-target="#modal_add_new_ui_node"  href="#">
-                      <i class="icon-plus"></i> Add new UI element</a>
-                      <a id="btn_toggle_config" class="btn" href="#">
-                      <i class="icon-settings"></i> Enable/Disable UI Config</a>
-                    </div>
-          
-                  </div>
-          
-                <!-- Client UI -->
-                <div id="client_ui" class="content container-fluid" style="position:relative; height:600px; margin:10px; padding:0px; background-color:white;">
-                </div>
-              
-        
-        
-        <!-- Modals-->
-        <div class="modal fade" id="modal_add_new_ui_node" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h4 class="modal-title">Add New UI element</h4>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <ul class="nav nav-tabs" role="tablist">
-                  <li class="nav-item">
-                    <a class="nav-link tab_nav_ui_node active" data-type="label" data-toggle="tab" href="#tab_add_label" role="tab" aria-selected="true">
-                    <i class="fa fa-font"></i> Label</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link tab_nav_ui_node" data-type="html" data-toggle="tab" href="#tab_add_html" role="tab" aria-selected="true">
-                    <i class="fa fa-html5"></i> HTML</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link tab_nav_ui_node" data-type="button" data-toggle="tab" href="#tab_add_button" role="tab">
-                    <i class="fa fa-mouse-pointer"></i> Button</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link tab_nav_ui_node" data-type="input_text" data-toggle="tab" href="#tab_add_input_text" role="tab">
-                    <i class="fa fa-keayboard-o"></i> Input Text</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link tab_nav_ui_node" data-type="switch" data-toggle="tab" href="#tab_add_switch" role="tab">
-                    <i class="fa fa-check-square"></i> Switch</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link tab_nav_ui_node" data-type="slider" data-toggle="tab" href="#tab_add_slider" role="tab">
-                    <i class="fa fa-arrows-h"></i> Slider</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link tab_nav_ui_node" data-type="colorpicker" data-toggle="tab" href="#tab_add_colorpicker" role="tab">
-                    <i class="fa fa-eyedropper"></i> Color picker</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link tab_nav_ui_node" data-type="gauge" data-toggle="tab" href="#tab_add_gauge" role="tab">
-                    <i class="icons cui-speedometer"></i> Gauge</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link tab_nav_ui_node" data-type="chart" data-toggle="tab" href="#tab_add_chart" role="tab">
-                    <i class="fa fa-line-chart"></i> Chart</a>
-                  </li>
-                </ul>
-                <div class="tab-content" id="tab_panes_ui_node">
-                  <div class="tab-pane active" id="tab_add_label">
-                    <form class="form_add_ui_element">
-                      <input class="form-control" type="hidden" name="type" value="label"> 
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="text" name="text" placeholder="Text">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>      
-                      <div class="form-group form-actions">
-                        <button class="btn btn-sm btn-secondary" type="submit">Submit</button>
-                      </div>
-                    </form> 
-                  </div>
-                  <div class="tab-pane" id="tab_add_html">
-                    <form class="form_add_ui_element">
-                      <input class="form-control" type="hidden" name="type" value="html"> 
-                      <div class="form-group">
-                        <div class="input-group">
-                         <textarea id="ckEditor_html5_add" name="html"></textarea>
-                          
-                        </div>
-                      </div>      
-                      <div class="form-group form-actions">
-                        <button class="btn btn-sm btn-secondary" type="submit">Submit</button>
-                      </div>
-                    </form> 
-                  </div>
-                  <div class="tab-pane" id="tab_add_button">
-                    <form class="form_add_ui_element">
-                      <input class="form-control" type="hidden" name="type" value="button"> 
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="text" name="text" placeholder="Button Text">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>     
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="text" name="path" placeholder="Message Path">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>     
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="text" name="message" placeholder="Message">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>      
-                      <div class="form-group form-actions">
-                        <button class="btn btn-sm btn-secondary" type="submit">Submit</button>
-                      </div>
-                    </form> 
-                  </div>
-                  <div class="tab-pane" id="tab_add_input_text">
-                    <form class="form_add_ui_element">
-                      <input class="form-control" type="hidden" name="type" value="input_text"> 
-                        
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="text" name="path" placeholder="Message Path">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>     
-                      <div class="form-group form-actions">
-                        <button class="btn btn-sm btn-secondary" type="submit">Submit</button>
-                      </div>
-                    </form> 
-                  </div>
-                  <div class="tab-pane" id="tab_add_switch">
-                    <form class="form_add_ui_element">
-                      <input class="form-control" type="hidden" name="type" value="switch"> 
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="text" name="path" placeholder="Message Path">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>     
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="text" name="message_on" placeholder="Message On">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>      
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="text" name="message_off" placeholder="Message Off">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>      
-                      <div class="form-group form-actions">
-                        <button class="btn btn-sm btn-secondary" type="submit">Submit</button>
-                      </div>
-                    </form>  
-                  </div>
-                  <div class="tab-pane" id="tab_add_slider">
-                    <form class="form_add_ui_element">
-                      <input class="form-control" type="hidden" name="type" value="slider"> 
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="text" name="path" placeholder="Message Path">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>     
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="number" name="value_min" value="0">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>      
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="number" name="value_max" value="100">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>      
-                      <div class="form-group form-actions">
-                        <button class="btn btn-sm btn-secondary" type="submit">Submit</button>
-                      </div>
-                    </form> 
-                  </div>
-                  <div class="tab-pane" id="tab_add_colorpicker">
-                  <form class="form_add_ui_element">
-                      <input class="form-control" type="hidden" name="type" value="colorpicker"> 
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="text" name="path" placeholder="Message Path">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>     
-                      <div class="form-group form-actions">
-                        <button class="btn btn-sm btn-secondary" type="submit">Submit</button>
-                      </div>
-                    </form> 
-                  </div>
-                  <div class="tab-pane" id="tab_add_gauge">
-                    <form class="form_add_ui_element">
-                      <input class="form-control" type="hidden" name="type" value="gauge"> 
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="text" name="text" placeholder="Gauge Text">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>     
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="text" name="path" placeholder="Message Path">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>     
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="number" name="value_min" value="0">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>      
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="number" name="value_max" value="100">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>      
-                      <div class="form-group form-actions">
-                        <button class="btn btn-sm btn-secondary" type="submit">Submit</button>
-                      </div>
-                    </form> 
-                  </div>
-                  <div class="tab-pane" id="tab_add_chart">
-                  <form class="form_add_ui_element">
-                      <input class="form-control" type="hidden" name="type" value="chart"> 
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="text" name="text" placeholder="Chart Text">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>     
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="text" name="path" placeholder="Message Path">
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>     
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="number" name="value_min" value=0>
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>      
-                      <div class="form-group">
-                        <div class="input-group">
-                          <input class="form-control" type="number" name="value_max" value=100>
-                          <div class="input-group-append">
-                            <span class="input-group-text">
-                              <i class="fa fa-user"></i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>      
-                      <div class="form-group form-actions">
-                        <button class="btn btn-sm btn-secondary" type="submit">Submit</button>
-                      </div>
-                    </form> 
-                  </div>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button class="btn btn_modal_close btn-secondary" type="button" data-dismiss="modal">Close</button>
-              </div>
-            </div>
-          <!-- /.modal-content-->
-          </div>
-        <!-- /.modal-dialog-->
-        </div>
-        
-        <div id="snackbar">Some text some message..</div>
-        
-      </div>  
+       
+      </div>
+       <!-- App content-->
+       <div id="snackbar">Some text some message..</div>  
     </div>
     <footer class="app-footer">
       <div>
@@ -506,15 +82,46 @@
       </div>
       
     </footer>
+
+ <!-- Modals-->
+ <div class="modal fade" id="modal_add_client" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add New Client</h4>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="form_add_client">
+          <div class="form-group">
+            <div class="input-group">
+              <input class="form-control" type="text" name="name" placeholder="Client Name">
+            </div>
+          </div>   
+          <div class="form-group form-actions">
+            <button class="btn btn-sm btn-secondary" type="submit">Submit</button>
+          </div>
+        </form> 
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn_modal_close btn-secondary" type="button" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  <!-- /.modal-content-->
+  </div>
+<!-- /.modal-dialog-->
+
+
+
+
+
     <!-- CoreUI and necessary plugins-->
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/perfect-scrollbar.min.js"></script>
     <script src="js/coreui.min.js"></script>
-
-    
-
-    <script src="js/main.js"></script>
 
     <script src="js/jscolor.js"></script>
     <script src="js/raphael-2.1.4.js"></script>
@@ -524,6 +131,15 @@
     <script src="js/paho-mqtt.js"></script>
 
     <script src="//cdn.ckeditor.com/4.13.0/full/ckeditor.js"></script>
+
+    
+
+    <script src="js/app/main.js"></script>
+    <script src="js/app/client.js"></script>
+    <script src="js/app/connection.js"></script>
+    <script src="js/app/ui.js"></script>
+
+   
   
 
     <!-- Interact.JS App -->
