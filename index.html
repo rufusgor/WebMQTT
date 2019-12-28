@@ -13,10 +13,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <meta name="description" content="CoreUI - Open Source Bootstrap Admin Template">
-    <meta name="author" content="Łukasz Holeczek">
-    <meta name="keyword" content="Bootstrap,Admin,Template,Open,Source,jQuery,CSS,HTML,RWD,Dashboard">
-    <title>IOT Playground</title>
+    <meta name="description" content="WEB MQTT, WEB Based interactive Client for MQTT protocol">
+    <meta name="keyword" content="MQTT, WEB, Client, dashboard, iot, device, protocol">
+    <title>WEB MQTT</title>
     <!-- Icons-->
     <link href="icons/coreui-icons.min.css" rel="stylesheet">
     <link href="icons/flag-icon.min.css" rel="stylesheet">
@@ -32,8 +31,7 @@
     <header class="app-header navbar">
      
       <a class="navbar-brand" href="index.html">
-        <img class="navbar-brand-full" src="img/brand/logo.svg" width="89" height="25" alt="CoreUI Logo">
-        <img class="navbar-brand-minimized" src="img/brand/sygnet.svg" width="30" height="30" alt="CoreUI Logo">
+        WEB MQTT
       </a>
     </header>
     <div class="app-body">
@@ -45,17 +43,8 @@
                 <i class="nav-icon icon-home"></i> Home
               </a>
             </li>
-            <li class="nav-item nav-dropdown">
-              <a class="nav-link nav-dropdown-toggle" href="#">
-                <i class="nav-icon icon-cursor"></i> Tutorials</a>
-              <ul class="nav-dropdown-items">
-                <li class="nav-item">
-                  <a class="nav-link" href="buttons/buttons.html">
-                    <i class="nav-icon icon-cursor"></i> Basic Connection</a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-title">Clients</li>
+            
+            <li class="nav-title">Local Clients</li>
             <span id="sidemenu_client_list">
             </span>
             <li class="nav-item">
@@ -144,6 +133,16 @@
 
     <!-- Interact.JS App -->
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-154878287-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-154878287-2');
+    </script>
 
   
   </body>

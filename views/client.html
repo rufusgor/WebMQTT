@@ -2,6 +2,7 @@
    <ol class="breadcrumb">
     <li class="breadcrumb-item">Home</li>
   </ol>
+  
 
   <div class="content container-fluid" style="position:relative; margin:10px; padding:0px; background-color:white;">
     <ul class="nav nav-tabs" id="myTab1" role="tablist">
@@ -12,7 +13,12 @@
     <div class="tab-content" id="myTab1Content">
       <div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
         <form id="form_broker_connection">
+          <div class="alert alert-warning" role="alert">
+            If the Page is hosted at a HTTPS secured service (Such as Github.io) you can only connect to broker with websocket + SSL support.
+            <br>Example: mqtt.eclipse.org, port:443, SSL Enabled!
+          </div>
             <div class="row">
+              
               <div class= "col-sm-3">
                 <label>Broker address</label>
                 <input class="form-control" name="broker_address" type="text" placeholder="Broker Address">
@@ -108,7 +114,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">Add New UI element</h4>
+          <h4 class="modal-title">Add New / Edit UI element</h4>
           <button class="close" type="button" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span>
           </button>
@@ -118,10 +124,6 @@
             <li class="nav-item">
               <a class="nav-link tab_nav_ui_node active" data-type="label" data-toggle="tab" href="#tab_add_label" role="tab" aria-selected="true">
               <i class="fa fa-font"></i> Label</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link tab_nav_ui_node" data-type="html" data-toggle="tab" href="#tab_add_html" role="tab" aria-selected="true">
-              <i class="fa fa-html5"></i> HTML</a>
             </li>
             <li class="nav-item">
               <a class="nav-link tab_nav_ui_node" data-type="button" data-toggle="tab" href="#tab_add_button" role="tab">
@@ -154,6 +156,10 @@
             <li class="nav-item">
               <a class="nav-link tab_nav_ui_node" data-type="chart" data-toggle="tab" href="#tab_add_chart" role="tab">
               <i class="fa fa-line-chart"></i> Chart</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link tab_nav_ui_node" data-type="html" data-toggle="tab" href="#tab_add_html" role="tab" aria-selected="true">
+              <i class="fa fa-html5"></i> HTML</a>
             </li>
           </ul>
           <div class="tab-content" id="tab_panes_ui_node">

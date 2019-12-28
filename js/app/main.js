@@ -103,7 +103,7 @@ switch(params.get('page')){
     $("#sidemenu_client_list").append(`
         <li class="nav-item">
             <a class="nav-link btn_sidemenu_client" href="index.html?page=client&id=`+client.id+`">`+client.name+`
-            <span>  <i class="btn_delete_client nav-icon badge icon-trash" style="color:red; display:none;"></i></span></a>
+            <span>  <i class="btn_delete_client nav-icon badge icon-trash" data-client-id="`+client.id+`" style="color:red; display:none;"></i></span></a>
             
         </li>`);
   });
@@ -114,6 +114,22 @@ switch(params.get('page')){
 
     $(document).on("mouseleave", ".btn_sidemenu_client", function(){
         $(this).find(".btn_delete_client").css("display", "none");
+    });
+
+    $(document).on("click", ".btn_delete_client", function(e){
+        e.preventDefault();
+        var client_to_delete_id = $(this).data("client-id");
+        $.each(localDB.CLIENTS, function(index, client){
+            if(client.id == client_to_delete_id ){
+                var index = localDB.CLIENTS.indexOf(client);
+                if (index > -1) {
+                    localDB.CLIENTS.splice(index, 1);
+                    console.log(localDB.CLIENTS);
+                    saveDB();
+                    window.location.reload();
+                }
+            }
+        })
     });
 
 });
