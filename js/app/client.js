@@ -334,25 +334,6 @@
 
 $(function () {
 
-   
-        
-
-    
-    
-    
-    //console.log(Object.values(broker_connection));
-    
-   
-    
-    
-   
-    
-    
-
-    
-    
-    
-    
     
     //remove element from array
     function removeNode(array, node_id) {
@@ -425,9 +406,15 @@ $(function () {
         $.each($(".ui_div"), function(){
           interact(this).draggable(true);
           $(this).css("background-color", "#c0c0c0");
-         
         });
         $(".ui_div_helper").css("display", "");
+
+        $("#client_ui").css("background-color", "#1985ac");
+        $("#client_ui").css("background-image", "linear-gradient(white 2px, transparent 2px), linear-gradient(90deg, white 2px, transparent 2px), linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px)");
+         $("#client_ui").css("background-size", "100px 100px, 100px 100px, 20px 20px, 20px 20px");
+         $("#client_ui").css("background-position", "-2px -2px, -2px -2px, -1px -1px, -1px -1px");
+
+
         ui_edit_enabled = true;
         modal("UI nodes configuration enabled");
       }else{
@@ -436,7 +423,12 @@ $(function () {
           $(this).css("background-color", "");
         
         });
-        $(".ui_div_helper").css("display", "none")
+        $(".ui_div_helper").css("display", "none");
+
+        $("#client_ui").css("background-color", "white");
+        $("#client_ui").css("background-image", "");
+         $("#client_ui").css("background-size", "");
+         $("#client_ui").css("background-position", "");
         ui_edit_enabled = false;
         modal("UI nodes configuration disabled");
       }
