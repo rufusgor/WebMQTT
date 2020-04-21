@@ -124,3 +124,9 @@
     .round input[type="checkbox"]:checked + label:after {
       opacity: 1;
     }
+
+    .ui-widget.ui-widget-content {
+        z-index: 999999999;
+        overflow: scroll;
+        height: 50%;
+    }

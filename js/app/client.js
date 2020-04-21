@@ -1,4 +1,4 @@
-
+var availablePath = [];
   function loadClient(){
     //init CKEDITOR
     CKEDITOR.replace( 'ckEditor_html5_add' );
@@ -542,8 +542,24 @@ $(function () {
     
     // called when the client connects
     function onConnect() {
+
+        //Subscribe ALL topic
+        client.subscribe("#");
+        setTimeout(function () {
+            //unSubscribe ALL topic after 10sec
+            client.unsubscribe("#");
+        }, 10000);
+
+        //input for autocomplete
+        $("input[name='path']").autocomplete({
+            source: availablePath
+        });
       // Once a connection has been made, make a subscription and send a message.
       modal("Client connected");
+
+      //hide connection tab
+        $("#myTab1").addClass("collapse");
+        $("#myTab1Content").removeClass("active").addClass("collapse");
       //client.subscribe("rundebugrepeat/test/Temperature");
       
     
@@ -575,7 +591,11 @@ $(function () {
     // called when a message arrives
     function onMessageArrived(message) {
       console.log("onMessageArrived:"+message.destinationName);
-      var message_nodes = json_ui.nodes.filter(function(ui_node) {
+      //add topic path to array
+        if (!availablePath.includes(message.destinationName)) {
+            availablePath.push(message.destinationName)
+        }
+        var message_nodes = json_ui.nodes.filter(function(ui_node) {
         return ui_node.path == message.destinationName;
       });
       console.log(message_nodes);
