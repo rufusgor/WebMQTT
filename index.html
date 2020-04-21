@@ -24,8 +24,9 @@
     <!-- Main styles for this application-->
     <link href="css/style.css" rel="stylesheet">
     <link href="css/app.css" rel="stylesheet">
-    <link href="css/pace.min.css" rel="stylesheet"> 
+    <link href="css/pace.min.css" rel="stylesheet">
     <link href="css/fontawesome-iconpicker.min.css" rel="stylesheet">
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
   </head>
   <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
     <header class="app-header navbar">
@@ -57,7 +58,7 @@
                 <i class="nav-icon icon-home"></i> Home
               </a>
             </li>
-            
+
             <li class="nav-title">Local Clients</li>
             <span id="sidemenu_client_list">
             </span>
@@ -66,24 +67,24 @@
                 <i class="nav-icon icon-plus"></i> Add Client
               </a>
             </li>
-            
-           
+
+
           </ul>
         </nav>
         <button class="sidebar-minimizer brand-minimizer" type="button"></button>
       </div>
-      <div class="main" id="main">      
-       
+      <div class="main" id="main">
+
       </div>
        <!-- App content-->
-       <div id="snackbar">Some text some message..</div>  
+       <div id="snackbar">Some text some message..</div>
     </div>
     <footer class="app-footer">
       <div>
         <a href="#">IOT Playground</a>
         <span>&copy; 2019 RunDebugRepeat.com</span>
       </div>
-      
+
     </footer>
 
  <!-- Modals-->
@@ -102,11 +103,11 @@
             <div class="input-group">
               <input class="form-control" type="text" name="name" placeholder="Client Name">
             </div>
-          </div>   
+          </div>
           <div class="form-group form-actions">
             <button class="btn btn-sm btn-secondary" type="submit">Submit</button>
           </div>
-        </form> 
+        </form>
       </div>
       <div class="modal-footer">
         <button class="btn btn_modal_close btn-secondary" type="button" data-dismiss="modal">Close</button>
@@ -135,19 +136,19 @@
 
     <script src="//cdn.ckeditor.com/4.13.0/full/ckeditor.js"></script>
 
-    
+
 
     <script src="js/app/main.js"></script>
     <script src="js/app/client.js"></script>
     <script src="js/app/connection.js"></script>
     <script src="js/app/ui.js"></script>
 
-   
-  
+
+
 
     <!-- Interact.JS App -->
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
-
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-154878287-2"></script>
     <script>
@@ -158,6 +159,6 @@
       gtag('config', 'UA-154878287-2');
     </script>
 
-  
+
   </body>
 </html>
