@@ -130,3 +130,9 @@
         overflow: scroll;
         height: 50%;
     }
+    .ui_div_helper {
+        display: none;
+    }
+    #home{
+        padding: 5px;
+        }

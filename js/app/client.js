@@ -1,7 +1,5 @@
-var availablePath = [];
+
   function loadClient(){
-    //init CKEDITOR
-    CKEDITOR.replace( 'ckEditor_html5_add' );
 
     //init form jscolors
     var jscolor_modal_options = {
@@ -43,7 +41,7 @@ var availablePath = [];
       //.val(Object.values(broker_connection)[index]);
       
     });
-    
+
   }
 
    //Android Webview Object.Values fix....
@@ -56,9 +54,8 @@ var availablePath = [];
    var form_ui_node_mode = ""; //edit: edit node; new: new node;
    var selected_node_id = "";
    var ui_edit_enabled = false;
-   
-   //ckEditor init
-   //CKEDITOR.replace('ckEditor_html5_add');
+   var availablePath = [];
+
    var client_array_index = 0;
 
    $.each(localDB.CLIENTS, function(index, client){
@@ -79,6 +76,14 @@ var availablePath = [];
        modal("UI data saved successfully.");
    };
 
+  function save_config() {
+      var message = new Paho.Message(JSON.stringify(localDB));
+      message.destinationName = 'webMQTT/' + broker_connection["broker_username"] + '/settings';
+      message.retained = true;
+      client.send(message);
+      console.log("Config save to MQTT");
+  }
+
    //UI Add element function
    function ui_add_element(ui_node){
     var html = `
@@ -90,27 +95,30 @@ var availablePath = [];
         break;
   
         case "label":
-            html +=`<div style="color:#`+ui_node.color+`">`+ ui_node.text +`</div>`+`<br>`;
+            html +=`<div style="color:#`+ui_node.color+`">`+ ui_node.text +`</div>`;
         break;
   
         case "html":
-          html += ui_node.html +`<br>`;
+          html += ui_node.html;
          break;
   
         case "switch":
             html += `<label class="switch switch-label switch-pill switch-primary">
            <input id="switch_`+ui_node.id+`"" class="ui_switch switch-input" type="checkbox" data-node-id="`+ui_node.id+`">
            <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
-          </label>
-          <br>`
+          </label>`
         break;
-  
+
+        case "textVal":
+           html += ui_node.text +`
+           <div id="textVal_`+ui_node.id+`" data-node-id="`+ui_node.id+`">test</div>`
+        break;
+
         case "checkbox":
             html += `<div class="round">
             <input id="checkbox_`+ui_node.id+`"" class="ui_checkbox" type="checkbox" data-node-id="`+ui_node.id+`">
             <label id="checkbox_label_`+ui_node.id+`"" for="checkbox_`+ui_node.id+`""></label>
-            </div>
-           <br>`
+            </div>`
         break;
   
         case "input_text":
@@ -124,25 +132,21 @@ var availablePath = [];
   
         case "slider":
             html += `
-              <input id="slider_`+ui_node.id+`" type="range" class="slider ui_slider" min="`+ui_node.value_min+`" max="`+ui_node.value_max+`" data-node-id="`+ui_node.id+`"></input>
-            <br>`;
+              <input id="slider_`+ui_node.id+`" type="range" class="slider ui_slider" min="`+ui_node.value_min+`" max="`+ui_node.value_max+`" data-node-id="`+ui_node.id+`"></input>`;
         break;
   
         case "colorpicker":
             html += `
-            <input id="colorpicker_`+ui_node.id+`" class="jscolor ui_colorpicker" data-node-id="`+ui_node.id+`">
-            <br>`;
+            <input id="colorpicker_`+ui_node.id+`" class="jscolor ui_colorpicker" data-node-id="`+ui_node.id+`">`;
             
         break;
   
         case "gauge":
-            html += `<div id="gauge_`+ui_node.id+`" class="200x160px"></div>
-            <br>`;
+            html += `<div id="gauge_`+ui_node.id+`" class="gauge"></div>`;
         break;
   
         case "chart":
-            html += `<canvas id="chart_`+ui_node.id+`" style="display: block; width: 500px; height: 300px;" width="500" height="300" class="chartjs-render-monitor"></canvas>
-            <br>`;
+            html += `<canvas id="chart_`+ui_node.id+`" style="display: block; width: 500px; height: 300px;" width="500" height="300" class="chartjs-render-monitor"></canvas>`;
         break;
   
         default:
@@ -253,7 +257,6 @@ var availablePath = [];
     }
   
       //Subscribe to path if client is connected
-      console.log(client);
       if(ui_node.path != null && typeof(client) !== "undefined"){
         if(client.isConnected()){
           client.subscribe(ui_node.path);
@@ -266,13 +269,13 @@ var availablePath = [];
   var x = ui_node.pos_x; var y =ui_node.pos_y;
   
   element.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
-  
+
   interact(element)
     .draggable({
       modifiers: [
         interact.modifiers.snap({
           targets: [
-            interact.createSnapGrid({ x: 5, y:5 }) //ugrások száma
+            interact.createSnapGrid({ x: 1, y:1 }) //ugrások száma
           ],
           range: Infinity,
           relativePoints: [ { x: 0, y: 0 } ]
@@ -305,9 +308,19 @@ var availablePath = [];
         }
       });
       save_ui();
-          
+
+
     });
-        
+       $(document).on("mouseenter", "#grid-snap_" + ui_node.id, function(){
+           if(ui_edit_enabled) {
+               $("#grid-snap_" + ui_node.id + " .ui_div_helper").css("display", "block");
+           }
+       });
+       $(document).on("mouseleave", "#grid-snap_" + ui_node.id, function(){
+           if(ui_edit_enabled) {
+               $("#grid-snap_" + ui_node.id + " .ui_div_helper").css("display", "none");
+           }
+       });
   
   
   }
@@ -367,9 +380,20 @@ $(function () {
       save_ui();
       modal("UI node removed successfully.");
     }
-    
-  
-    
+
+
+    $(window).on("load", function() {
+        console.log("ready!");
+        if($(".auto_connect").is(':checked')){
+            connect();
+            $("#btn_broker_disconnectBr").css("display","block");
+        }
+        if(window.innerWidth <= 600){
+            $(".ui_div").removeAttr("style");
+            $(".ui_div").attr("style", "height: 250px; width:250px");
+        }
+
+    });
   
     
     
@@ -437,12 +461,20 @@ $(function () {
         //$(".ui_div").css("background", "transparent");
         //$(".ui_div_helper").css("display", "none")
     });
-    
-    
-    $(document).on("click", "#btn_broker_connect", function(){
-    
+
+    $(document).on("click", "#btn_broker_connectBr", function(){
         save_broker_connection();//Save broker connection data and reload it to broker connection object
-    
+        connect();
+        save_config();
+    });
+    $(document).on("click", "#btn_broker_connect", function(){
+        save_broker_connection();//Save broker connection data and reload it to broker connection object
+        connect();
+        save_config();
+    });
+
+
+    function connect(){
         //client = new Paho.Client(broker_connection["broker_address"], Number(broker_connection["broker_port"]), broker_connection["broker_client_id"]);
         //client = new Paho.Client("ws://"+broker_connection["broker_address"]+":"+broker_connection["broker_port"], broker_connection["broker_client_id"]);
         
@@ -531,9 +563,19 @@ $(function () {
     
         client.connect(options);
     
+    }; //)
+    $(document).on("click", "#btn_broker_disconnectBr", function(){
+        //view connection tab
+        $("#home").css("display","block");
+        $("#btn_broker_disconnectBr").css("display","none");
+        client.disconnect();
     });
-    $(document).on("click", "#btn_broker_disconnect", function(){
-      client.disconnect();
+    $(document).on("click", "#btn_broker_disconnectBr", function(){
+        //view connection tab
+        $("#home").css("display","block");
+        $("#btn_saveTo_MQTT").css("display","none");
+        $("#btn_broker_disconnectBr").css("display","none");
+        client.disconnect();
     });
     
     function onFail(context) {
@@ -549,6 +591,7 @@ $(function () {
             //unSubscribe ALL topic after 10sec
             client.unsubscribe("#");
         }, 10000);
+        client.subscribe("/webMQTT/+/settings")
 
         //input for autocomplete
         $("input[name='path']").autocomplete({
@@ -558,11 +601,15 @@ $(function () {
       modal("Client connected");
 
       //hide connection tab
-        $("#myTab1").addClass("collapse");
-        $("#myTab1Content").removeClass("active").addClass("collapse");
-      //client.subscribe("rundebugrepeat/test/Temperature");
-      
-    
+
+            $("#home").css("display", "none");
+            $("#btn_broker_connectBr").css("display", "none");
+            $("#btn_broker_disconnectBr").css("display", "block");
+            $("#btn_saveTo_MQTT").css("display", "");
+
+        //client.subscribe("rundebugrepeat/test/Temperature");
+
+
       //Subscribe to the UI node paths
       $.each(json_ui.nodes, function(){
     
@@ -573,8 +620,7 @@ $(function () {
           //console.log("[CLIENT] - Subscribed to path: "+ui_node.path);
         }
       });
-      $("#btn_broker_connect").css("display","none");
-      $("#btn_broker_disconnect").css("display","");
+
     }
     
     // called when the client loses its connection
@@ -584,13 +630,28 @@ $(function () {
         modal("Client disconnected: "+responseObject.errorMessag);
       }
       modal("Client disconnected");
-      $("#btn_broker_connect").css("display","");
-      $("#btn_broker_disconnect").css("display","none");
+      $("#btn_broker_connectBr").css("display","");
+      $("#btn_broker_disconnectBr").css("display","none");
     }
     
     // called when a message arrives
     function onMessageArrived(message) {
-      console.log("onMessageArrived:"+message.destinationName);
+
+        if(message.destinationName == 'webMQTT/'+broker_connection["broker_username"]+'/settings'){
+                // localDB["CLIENTS"]["0"]["UI"]["nodes"] == ""
+            var localDBA = {
+                "CLIENTS": [],
+                "SETTINGS":[]
+            }
+                localDB_json = JSON.parse(message.payloadString);
+                if(localDB == localDB_json) {
+                    localDB = localDB_json;
+                    saveDB(localDB);
+                    console.log("config load from MQTT");
+                }
+
+        }
+      // console.log("onMessageArrived:"+message.destinationName);
       //add topic path to array
         if (!availablePath.includes(message.destinationName)) {
             availablePath.push(message.destinationName)
@@ -598,9 +659,9 @@ $(function () {
         var message_nodes = json_ui.nodes.filter(function(ui_node) {
         return ui_node.path == message.destinationName;
       });
-      console.log(message_nodes);
+      // console.log(message_nodes);
       $.each(message_nodes, function(){
-        console.log(message.payloadString);
+        // console.log(message.payloadString);
         var ui_node = this;
         switch(ui_node.type){
           
@@ -608,16 +669,24 @@ $(function () {
           case "switch":
             switch(message.payloadString){
               case ui_node.message_on:
-                console.log( $("#switch_"+ui_node.id));
+                // console.log( $("#switch_"+ui_node.id));
                 $("#switch_"+ui_node.id).prop("checked", true);
               break;
               case ui_node.message_off:
-                  console.log( $("#switch_"+ui_node.id));
+                  // console.log( $("#switch_"+ui_node.id));
                   $("#switch_"+ui_node.id).prop("checked", false);
               break;
             }
           break;
-    
+
+            //textVal
+            case "textVal":
+                if(message.payloadString){
+                        // console.log( $("#textVal_"+ui_node.id));
+                        $("#textVal_"+ui_node.id).html(message.payloadString);
+                }
+                break;
+
            //Checkbox
            case "checkbox":
               switch(message.payloadString){
@@ -638,7 +707,7 @@ $(function () {
     
           //gauge
           case "gauge":
-            console.log(gauges);
+            // console.log(gauges);
             var message_gauges = gauges.filter(function(gauge) {
               return gauge.config.id == "gauge_"+ui_node.id;
             });
@@ -736,29 +805,17 @@ $(function () {
           if(this == "color"){
                 $("#tab_add_"+ui_node.type).find("input[name=color]").css('background-color', '#'+ui_node.color);
           }
-          switch(ui_node.type){
-            case "html":
-                CKEDITOR.instances.ckEditor_html5_add.setData(ui_node.html); 
-            break;
-
-            default:
                 $("#tab_add_"+ui_node.type).find("input[name="+this+"]").val(Object.values(ui_node)[index]);
-            break;
-          }
-          
+
         });
         
     
       });
-    
-      console.log(CKEDITOR.instances);
+
     
       //Form Add ui element or edit value
      $(document).on("submit", ".form_add_ui_element", function(event){
         event.preventDefault();
-        for (var i in CKEDITOR.instances) {
-          CKEDITOR.instances[i].updateElement();
-        };
         
         var formdata = $(this).serializeArray();
         console.log(formdata);
@@ -812,7 +869,7 @@ $(function () {
                   switch(ui_node.type){
                     case "html":
                         console.log(json_ui.nodes[index]);
-                        json_ui.nodes[index].html = CKEDITOR.instances.ckEditor_html5_add.getData();
+                        json_ui.nodes[index].html = $("#html5_add").val();
                     break;
     
                     default:
@@ -859,9 +916,13 @@ $(function () {
     
         save_ui(); // Save the UI 
         $(".btn_modal_close").click();
-        
       });
-    
+
+    //Delete button
+    $(document).on("click", "#btn_saveTo_MQTT", function(){
+        save_config();
+    });
+
       //Delete button
       $(document).on("click", ".btn_delete_ui_node", function(){
         var node_id = $(this).data("node-id");
@@ -1002,6 +1063,14 @@ $(function () {
         });
         modal("Slider: Message sent");
       });
-    
-      
-    });
+
+
+
+    // $( document ).ready(function() {
+    //     console.log( "document loaded" );
+    // });
+    //
+    // $( window ).on( "load", function() {
+    //     console.log( "window loaded" );
+    // });
+});
