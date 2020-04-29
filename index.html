@@ -27,45 +27,14 @@
     <link href="css/pace.min.css" rel="stylesheet">
     <link href="css/fontawesome-iconpicker.min.css" rel="stylesheet">
     <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@1.1.1/dist/gridstack.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/gridstack@1.1.1/dist/gridstack.all.js"></script>
+
   </head>
-  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
-  <header class="app-header navbar">
-    <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button" data-toggle="sidebar-lg-show">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <a class="navbar-brand" href="#">
-      <img class="navbar-brand-full" src="img/brand/logo.svg" width="89" height="25" alt="CoreUI Logo">
-      <img class="navbar-brand-minimized" src="img/brand/sygnet.svg" width="30" height="30" alt="CoreUI Logo">
-    </a>
+  <body class="app">
 
-  </header>
     <div class="app-body">
-      <div class="sidebar">
-        <nav class="sidebar-nav">
-          <ul class="nav">
-            <li class="nav-item">
-              <a class="nav-link" href="index.html">
-                <i class="nav-icon icon-home"></i> Home
-              </a>
-            </li>
-
-            <li class="nav-title">Local Clients</li>
-            <span id="sidemenu_client_list">
-            </span>
-            <li class="nav-item">
-              <a class="nav-link" data-toggle="modal" data-target="#modal_add_client" href="#">
-                <i class="nav-icon icon-plus"></i> Add Client
-              </a>
-            </li>
-
-
-          </ul>
-        </nav>
-        <button class="sidebar-minimizer brand-minimizer" type="button"></button>
-      </div>
       <div class="main" id="main">
 
       </div>
@@ -79,37 +48,6 @@
       </div>
 
     </footer>
-
- <!-- Modals-->
- <div class="modal fade" id="modal_add_client" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Add New Client</h4>
-        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form class="form_add_client">
-          <div class="form-group">
-            <div class="input-group">
-              <input class="form-control" type="text" name="name" placeholder="Client Name">
-            </div>
-          </div>
-          <div class="form-group form-actions">
-            <button class="btn btn-sm btn-secondary" type="submit">Submit</button>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn_modal_close btn-secondary" type="button" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  <!-- /.modal-content-->
-  </div>
-<!-- /.modal-dialog-->
-
 
 
 

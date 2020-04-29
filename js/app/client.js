@@ -17,6 +17,7 @@
       ui_add_element(ui_node);
       $.each($(".ui_div"), function(){
         interact(this).draggable(false);
+          interact(this).resizable(false);
       });
       $(".ui_div_helper").css("display", "none");
     });
@@ -64,7 +65,7 @@
      }
    });
    console.log(client_array_index);
-   
+
 
    //JSON_UI array of objects
    var json_ui = localDB.CLIENTS[client_array_index].UI;
@@ -83,12 +84,18 @@
       client.send(message);
       console.log("Config save to MQTT");
   }
+  // function load_config(message) {
+  //     localDB_json = JSON.parse(message.payloadString);
+  //         localDB = localDB_json;
+  //         saveDB(localDB);
+  //         console.log("config load from MQTT");
+  // }
 
    //UI Add element function
    function ui_add_element(ui_node){
     var html = `
       <div id="grid-snap_`+ui_node.id+`" data-node-id="`+ui_node.id+`" class="ui_div" style="position:absolute;">`;
-  
+
       switch(ui_node.type){
         case "button":
             html += `<button class="btn ui_button btn-block btn-primary" type="button" style="width:200px; " data-node-id="`+ui_node.id+`">`+ui_node.text+`</button>`
@@ -111,7 +118,7 @@
 
         case "textVal":
            html += ui_node.text +`
-           <div id="textVal_`+ui_node.id+`" data-node-id="`+ui_node.id+`">test</div>`
+           <div id="textVal_`+ui_node.id+`" data-node-id="`+ui_node.id+`"></div>`
         break;
 
         case "checkbox":
@@ -156,20 +163,20 @@
     
     
     html += `<div class="ui_div_helper btn-group float-right">
+                <div class="mqtt_path">`+ui_node.path+`</div>
               <button class="btn btn-transparent btn_edit_ui_node" data-node-id="`+ui_node.id+`" data-toggle="modal" data-target="#modal_add_new_ui_node"aria-haspopup="true" aria-expanded="false">
                 <i class="icon-settings"></i>
               </button>
               <button class="btn btn-transparent btn_delete_ui_node" data-node-id="`+ui_node.id+`" >
                 <i class="icon-trash" style="color:red;"></i>
               </button>
-  
             </div>
           </div>
         </div>`;
         
     
     $("#client_ui").append(html);
-   
+
   
     //activate jscolor
     if(ui_node.type=="colorpicker"){
@@ -267,22 +274,65 @@
     var element = document.getElementById('grid-snap_'+ui_node.id);
   
   var x = ui_node.pos_x; var y =ui_node.pos_y;
-  
+  var sizx = ui_node.size_x; var sizy =ui_node.size_y;
+
   element.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+  element.style.width = sizx;
+  element.style.height = sizy;
 
   interact(element)
-    .draggable({
+      .resizable({
+          // resize from all edges and corners
+          edges: { right: true, bottom: true },
+
+          listeners: {
+              move (event) {
+                  var target = event.target
+                  var sizx = target.style.width
+                  var sizy = target.style.height
+
+                  // update the element's style
+                  target.style.width = event.rect.width + 'px'
+                  target.style.height = event.rect.height + 'px'
+
+                  var node_id = $(event.target).data('node-id');
+                  console.log(node_id);
+                  $.each(json_ui.nodes, function(){
+                      if(this.id == node_id){
+                          console.log(this);
+                          this.size_x = sizx;
+                          this.size_y = sizy;
+                      }
+                  });
+                  save_ui();
+              }
+          },
+          modifiers: [
+              // keep the edges inside the parent
+              interact.modifiers.restrictEdges({
+                  outer: 'parent'
+              }),
+
+              // minimum size
+              interact.modifiers.restrictSize({
+                  min: { width: 100, height: 50 }
+              })
+          ],
+
+          inertia: true
+      })
+      .draggable({
       modifiers: [
         interact.modifiers.snap({
           targets: [
-            interact.createSnapGrid({ x: 1, y:1 }) //ugrások száma
+            interact.createSnapGrid({ x: 30, y:30 }) //ugrások száma
           ],
           range: Infinity,
           relativePoints: [ { x: 0, y: 0 } ]
         }),
         interact.modifiers.restrict({
           restriction: element.parentNode,
-          elementRect: { top: 0, left: 0, bottom: 0, right: 0},
+          elementRect: { top: 0, left: 0, bottom: 1, right: 1},
           endOnly: true
         })
       ],
@@ -311,9 +361,10 @@
 
 
     });
+
        $(document).on("mouseenter", "#grid-snap_" + ui_node.id, function(){
            if(ui_edit_enabled) {
-               $("#grid-snap_" + ui_node.id + " .ui_div_helper").css("display", "block");
+               $("#grid-snap_" + ui_node.id + " .ui_div_helper").css("display", "inherit");
            }
        });
        $(document).on("mouseleave", "#grid-snap_" + ui_node.id, function(){
@@ -345,9 +396,26 @@
       modal("Broker connnection data saved successfully.");
     }
 
-$(function () {
 
-    
+
+  $(window).on("load", function() {
+      setTimeout(function () {
+      console.log("ready!");
+      if($(".auto_connect").is(':checked')){
+          connect();
+          $("#btn_broker_disconnectBr").css("display","inline-block");
+      }
+      if(window.innerWidth <= 600){
+          $(".ui_div").removeAttr("style");
+          $(".ui_div").attr("style", "height: 250px; width:250px");
+      }
+      }, 1000);
+  });
+
+// $(function () {
+
+
+
     //remove element from array
     function removeNode(array, node_id) {
       $.each(array, function(){
@@ -356,10 +424,7 @@ $(function () {
         if(ui_node.id == node_id){
     
           var deleted_node_path = this.path;
-         
-          
-    
-    
+
           var index = array.indexOf(ui_node);
           if (index > -1) {
               array.splice(index, 1);
@@ -382,22 +447,10 @@ $(function () {
     }
 
 
-    $(window).on("load", function() {
-        console.log("ready!");
-        if($(".auto_connect").is(':checked')){
-            connect();
-            $("#btn_broker_disconnectBr").css("display","block");
-        }
-        if(window.innerWidth <= 600){
-            $(".ui_div").removeAttr("style");
-            $(".ui_div").attr("style", "height: 250px; width:250px");
-        }
 
-    });
-  
-    
-    
-    
+
+
+
     
     
     $(document).on("mouseover", ".ui_div", function(){
@@ -413,8 +466,8 @@ $(function () {
         $(this).css('z-index', topZ+1);
         $(this).css("opacity", ".9");
       }
-     
-     
+
+
     });
     
     
@@ -429,9 +482,9 @@ $(function () {
       if(!ui_edit_enabled){
         $.each($(".ui_div"), function(){
           interact(this).draggable(true);
-          $(this).css("background-color", "#c0c0c0");
+            interact(this).resizable(true);
+          $(this).css("background-color", "#ffffff");
         });
-        $(".ui_div_helper").css("display", "");
 
         $("#client_ui").css("background-color", "#1985ac");
         $("#client_ui").css("background-image", "linear-gradient(white 2px, transparent 2px), linear-gradient(90deg, white 2px, transparent 2px), linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px)");
@@ -444,8 +497,9 @@ $(function () {
       }else{
         $.each($(".ui_div"), function(){
           interact(this).draggable(false);
-          $(this).css("background-color", "");
-        
+          interact(this).resizable(false);
+          $(this).css("background-color", "#ffffff");
+
         });
         $(".ui_div_helper").css("display", "none");
 
@@ -456,52 +510,50 @@ $(function () {
         ui_edit_enabled = false;
         modal("UI nodes configuration disabled");
       }
-        
-        
-        //$(".ui_div").css("background", "transparent");
+
+
+        $(".ui_div").css("background", "#ffffff");
         //$(".ui_div_helper").css("display", "none")
     });
 
     $(document).on("click", "#btn_broker_connectBr", function(){
         save_broker_connection();//Save broker connection data and reload it to broker connection object
         connect();
-        save_config();
     });
     $(document).on("click", "#btn_broker_connect", function(){
         save_broker_connection();//Save broker connection data and reload it to broker connection object
         connect();
-        save_config();
     });
 
 
     function connect(){
         //client = new Paho.Client(broker_connection["broker_address"], Number(broker_connection["broker_port"]), broker_connection["broker_client_id"]);
         //client = new Paho.Client("ws://"+broker_connection["broker_address"]+":"+broker_connection["broker_port"], broker_connection["broker_client_id"]);
-        
+
         /*client = new Paho.Client("mqtt.eclipse.org", 443, "/mqtt", "random_client_id_sadasad");
-    
-       
+
+
         // set callback handlers
         client.onConnectionLost = onConnectionLost;
         client.onMessageArrived = onMessageArrived;
-    
-      
+
+
         var willmessage = new Paho.Message(broker_connection["broker_lwat_message"]);
         willmessage.destinationName = broker_connection["broker_lwat_topic"];
         willmessage.qos = Number(broker_connection["broker_lwat_qos"]);
         if(typeof(broker_connection["broker_lwat_retain"]) !== "undefined"){
           willmessage.retained = broker_connection["broker_lwat_retain"];
         }
-    
+
         var options={};
-    
+
         options.onSuccess = onConnect;
         options.keepAliveInterval=Number(broker_connection["broker_keepalive"]);
-    
+
         if(typeof(broker_connection["broker_cleansession"]) !== "undefined"){
           options.cleanSession = broker_connection["broker_cleansession"];
         }
-    
+
         if(typeof(broker_connection["broker_useSSL"]) !== "undefined"){
           options.useSSL = broker_connection["broker_useSSL"];
         }
@@ -511,19 +563,19 @@ $(function () {
         options.onFailure = onFail;
         client.connect(options);
         */
-        
+
        if(broker_connection["broker_path"] != ""){
         client = new Paho.Client(broker_connection["broker_address"], Number(broker_connection["broker_port"]),broker_connection["broker_path"],  broker_connection["broker_client_id"]);
        }else{
         client = new Paho.Client(broker_connection["broker_address"], Number(broker_connection["broker_port"]),  broker_connection["broker_client_id"]);
        }
-       
-       
+
+
         // set callback handlers
         client.onConnectionLost = onConnectionLost;
         client.onMessageArrived = onMessageArrived;
-    
-    
+
+
         var options = {
          // invocationContext: { host: broker_connection["broker_address"], port: Number(broker_connection["broker_port"]), path: broker_connection["broker_path"], clientId: broker_connection["broker_client_id"] },
           timeout: 600,
@@ -531,15 +583,15 @@ $(function () {
           onSuccess: onConnect,
           onFailure: onFail
         };
-        
+
         if(typeof(broker_connection["broker_cleansession"]) !== "undefined"){
           options.cleanSession = broker_connection["broker_cleansession"];
         }
-    
+
         if(typeof(broker_connection["broker_useSSL"]) !== "undefined"){
           options.useSSL = broker_connection["broker_useSSL"];
         }
-    
+
         if(broker_connection["broker_lwat_topic"] != "" && broker_connection["broker_lwat_message"] != ""){
           var willmessage = new Paho.Message(broker_connection["broker_lwat_message"]);
           willmessage.destinationName = broker_connection["broker_lwat_topic"];
@@ -549,20 +601,20 @@ $(function () {
           }
           options.willMessage = willmessage;
         }
-        
-    
+
+
         if(typeof(broker_connection["broker_cleansession"]) !== "undefined"){
           options.cleanSession = broker_connection["broker_cleansession"];
         }
-    
+
         if(typeof(broker_connection["broker_useSSL"]) !== "undefined"){
           options.useSSL = broker_connection["broker_useSSL"];
         }
         options.userName = broker_connection["broker_username"];
         options.password = broker_connection["broker_password"];
-    
+
         client.connect(options);
-    
+
     }; //)
     $(document).on("click", "#btn_broker_disconnectBr", function(){
         //view connection tab
@@ -574,14 +626,16 @@ $(function () {
         //view connection tab
         $("#home").css("display","block");
         $("#btn_saveTo_MQTT").css("display","none");
+        $("#btn_loadFrom_MQTT").css("display","none");
+        $("#btn_loadFrom_MQTT").css("display","none");
         $("#btn_broker_disconnectBr").css("display","none");
         client.disconnect();
     });
-    
+
     function onFail(context) {
       console.log("ERROR", "Failed to connect. [Error Message: ", context.errorMessage, "]");
     }
-    
+
     // called when the client connects
     function onConnect() {
 
@@ -591,7 +645,7 @@ $(function () {
             //unSubscribe ALL topic after 10sec
             client.unsubscribe("#");
         }, 10000);
-        client.subscribe("/webMQTT/+/settings")
+        client.subscribe('webMQTT/'+broker_connection["broker_username"]+'/settings')
 
         //input for autocomplete
         $("input[name='path']").autocomplete({
@@ -604,17 +658,18 @@ $(function () {
 
             $("#home").css("display", "none");
             $("#btn_broker_connectBr").css("display", "none");
-            $("#btn_broker_disconnectBr").css("display", "block");
-            $("#btn_saveTo_MQTT").css("display", "");
+            $("#btn_broker_disconnectBr").css("display", "inline-block");
+            $("#btn_saveTo_MQTT").css("display", "inline-block");
+            $("#btn_loadFrom_MQTT").css("display", "none");
 
         //client.subscribe("rundebugrepeat/test/Temperature");
 
 
       //Subscribe to the UI node paths
       $.each(json_ui.nodes, function(){
-    
+
         var ui_node = this;
-    
+
         if(ui_node.path != null){
           client.subscribe(ui_node.path);
           //console.log("[CLIENT] - Subscribed to path: "+ui_node.path);
@@ -622,7 +677,7 @@ $(function () {
       });
 
     }
-    
+
     // called when the client loses its connection
     function onConnectionLost(responseObject) {
       if (responseObject.errorCode !== 0) {
@@ -630,33 +685,37 @@ $(function () {
         modal("Client disconnected: "+responseObject.errorMessag);
       }
       modal("Client disconnected");
-      $("#btn_broker_connectBr").css("display","");
+      $("#btn_broker_connectBr").css("display","inline-block");
       $("#btn_broker_disconnectBr").css("display","none");
     }
-    
+
     // called when a message arrives
     function onMessageArrived(message) {
 
         if(message.destinationName == 'webMQTT/'+broker_connection["broker_username"]+'/settings'){
-                // localDB["CLIENTS"]["0"]["UI"]["nodes"] == ""
-            var localDBA = {
-                "CLIENTS": [],
-                "SETTINGS":[]
-            }
-                localDB_json = JSON.parse(message.payloadString);
-                if(localDB == localDB_json) {
-                    localDB = localDB_json;
+                if(JSON.stringify(localDB) != message.payloadString) {
+                    localDB = JSON.parse(message.payloadString);
                     saveDB(localDB);
+                    reloadUI();
                     console.log("config load from MQTT");
                 }
-
         }
       // console.log("onMessageArrived:"+message.destinationName);
       //add topic path to array
         if (!availablePath.includes(message.destinationName)) {
             availablePath.push(message.destinationName)
         }
-        var message_nodes = json_ui.nodes.filter(function(ui_node) {
+
+        //update json_iu after load config from MQTT
+        $.each(localDB.CLIENTS, function(index, client){
+            if (client.id == params.get("id")){
+                client_array_index = index;
+            }
+        });
+        //JSON_UI array of objects
+        var json_ui = localDB.CLIENTS[client_array_index].UI;
+
+      var message_nodes = json_ui.nodes.filter(function(ui_node) {
         return ui_node.path == message.destinationName;
       });
       // console.log(message_nodes);
@@ -664,7 +723,7 @@ $(function () {
         // console.log(message.payloadString);
         var ui_node = this;
         switch(ui_node.type){
-          
+
           //Switch
           case "switch":
             switch(message.payloadString){
@@ -682,8 +741,18 @@ $(function () {
             //textVal
             case "textVal":
                 if(message.payloadString){
-                        // console.log( $("#textVal_"+ui_node.id));
-                        $("#textVal_"+ui_node.id).html(message.payloadString);
+                    if(ui_node.textValue != 0){
+                        var message_text = JSON.parse(message.payloadString, function(key, value) {
+                            // console.log(key, value)
+                            if (key == ui_node.textValue) {
+                                message_text = value;
+                            }
+                            return message_text;
+                        });
+                    }else{
+                        message_text = message.payloadString;
+                    }
+                    $("#textVal_"+ui_node.id).html(message_text);
                 }
                 break;
 
@@ -700,11 +769,11 @@ $(function () {
                     console.log( $("#checkbox_"+ui_node.id));
                     $("#checkbox_"+ui_node.id).prop("checked", false);
                     $("#checkbox_label_"+ui_node.id).css("background-color", "#fff");
-                    $("#checkbox_label_"+ui_node.id).css("border-color", "#c0c0c0");
+                    $("#checkbox_label_"+ui_node.id).css("border-color", "#ffffff");
                 break;
               }
             break;
-    
+
           //gauge
           case "gauge":
             // console.log(gauges);
@@ -716,7 +785,7 @@ $(function () {
               gauge.refresh(message.payloadString);
             });
           break;
-    
+
           //chart
           case "chart":
             var message_charts = charts.filter(function(chart){
@@ -725,38 +794,38 @@ $(function () {
             $.each(message_charts, function(){
               var chart = this;
               chart.config.data.labels.push("now");
-              
+
               var dataset = chart.config.data.datasets[0];
               dataset.data.push(message.payloadString);
-    
+
               if(dataset.data.length>=10){
                 dataset.data.shift();
                 chart.config.data.labels.shift();
               }
-       
-              
+
+
               chart.update();
             });
           break;
-    
+
           //slider
           case "slider":
               $("#slider_"+ui_node.id).val(message.payloadString);
           break;
-          
-    
-    
+
+
+
           default:
             console.log("[Error]: Message arrived, type not supported - "+ui_node.type);
           break;
         }
-        
+
       });
     }
-    
-    
+
+
     //Ui div event handlers
-    
+
       //Add new ui button clicked
       $(document).on("click", "#btn_add_new_ui_element", function(){
         form_ui_node_mode = "new";
@@ -769,10 +838,10 @@ $(function () {
          if($(this).attr("type") != "number" && $(this).attr("name") != "type"){
            $(this).val("");
          }
-        
+
         });
       });
-    
+
       //Form edit ui element open
       $(document).on("click", ".btn_edit_ui_node", function(){
         form_ui_node_mode = "edit";
@@ -800,23 +869,25 @@ $(function () {
           }
         });
         //populate input values from node data
-        
+
         $.each(Object.keys(ui_node), function(index){
           if(this == "color"){
                 $("#tab_add_"+ui_node.type).find("input[name=color]").css('background-color', '#'+ui_node.color);
           }
                 $("#tab_add_"+ui_node.type).find("input[name="+this+"]").val(Object.values(ui_node)[index]);
+                $("#tab_add_"+ui_node.type).find("textarea[name="+this+"]").val(Object.values(ui_node)[index]);
 
         });
-        
-    
+
+
       });
 
-    
+
       //Form Add ui element or edit value
      $(document).on("submit", ".form_add_ui_element", function(event){
+         console.log(event);
         event.preventDefault();
-        
+
         var formdata = $(this).serializeArray();
         console.log(formdata);
         console.log(form_ui_node_mode);
@@ -826,8 +897,8 @@ $(function () {
             new_node.id = create_UUID();
             new_node.pos_x =0;
             new_node.pos_y =0;
-        
-        
+
+
             $.each(formdata, function(){
               console.log(this);
               if (!isNaN(this.value)) { //check if value is convertible to number
@@ -835,7 +906,7 @@ $(function () {
               } else {
                 new_node[this.name] = this.value;
               }
-              
+
             });
             console.log(new_node);
             //console.log(JSON.stringify($(this).serializeArray()));
@@ -862,16 +933,16 @@ $(function () {
                 if(typeof(client) !== "undefined" && typeof(path_original) !== "undefined" && path_original != $("#tab_add_"+ui_node.type).find("input[name=path]").val() ){
                   //Subscribe to new path
                   client.subscribe($("#tab_add_"+ui_node.type).find("input[name=path]").val());
-                  
-    
+
+
                 }
                 $.each(json_ui.nodes[index], function(name, value){
                   switch(ui_node.type){
                     case "html":
                         console.log(json_ui.nodes[index]);
-                        json_ui.nodes[index].html = $("#html5_add").val();
+                        json_ui.nodes[index].html = $("#html").val();
                     break;
-    
+
                     default:
                         var input = $("#tab_add_"+ui_node.type).find("input[name="+name+"]");
                         console.log(input);
@@ -884,8 +955,8 @@ $(function () {
                         }
                     break;
                   }
-                 
-    
+
+
                   //Unsubscribe if no other node subscribed to this path
                   var message_nodes = json_ui.nodes.filter(function(ui_node) {//Are there any nodes in the same path remaining?
                     return ui_node.path == path_original;
@@ -896,25 +967,26 @@ $(function () {
                       client.unsubscribe(path_original);
                     }
                   }
-                 
-    
+
+
                 });
                 //console.log(json_ui.nodes[index]);
                 //újrarenderelni az elemet
                 $("#grid-snap_"+ui_node.id).remove();
                 ui_add_element(json_ui.nodes[index]);
-    
+
                 //ha az útvonal változott feliratkozni az új útvonalra
                //Todo leiratkozni, ha más elem nincs az előző útvonalon
               }
               modal("UI node edited successfully");
             });
-        
+              $(".ui_div").css("background-color", "#ffffff");
           break;
         }
-       
-    
-        save_ui(); // Save the UI 
+
+
+
+        save_ui(); // Save the UI
         $(".btn_modal_close").click();
       });
 
@@ -923,14 +995,18 @@ $(function () {
         save_config();
     });
 
+  $(document).on("click", "#btn_loadFrom_MQTT", function(){
+      load_config();
+  });
+
       //Delete button
       $(document).on("click", ".btn_delete_ui_node", function(){
         var node_id = $(this).data("node-id");
         removeNode(json_ui.nodes, node_id);
         $("#grid-snap_"+node_id).remove();
       });
-    
-    
+
+
       //Button
       $(document).on("click", ".ui_button", function(){
         var node_id = $(this).data("node-id");
@@ -939,9 +1015,9 @@ $(function () {
         });
         //console.log(message_nodes);
         $.each(message_nodes, function(){
-    
+
           var ui_node = this;
-    
+
           if(ui_node.type=="button"){
             var message = new Paho.Message(ui_node.message);
             message.destinationName = ui_node.path;
@@ -950,7 +1026,7 @@ $(function () {
         });
         modal("Button: Message sent");
       });
-    
+
       //Input
       $(document).on("keypress", ".input_text", function(e){
         if (e.which == 13) {
@@ -961,19 +1037,19 @@ $(function () {
           });
           //console.log(message_nodes);
           $.each(message_nodes, function(){
-      
+
             var ui_node = this;
-      
+
             if(ui_node.type=="input_text"){
               var message = new Paho.Message(input_message);
               message.destinationName = ui_node.path;
               client.send(message);
             }
           });
-        }  
+        }
         modal("Input Text: Message sent");
       });
-    
+
       //Switch
       $(document).on("change", ".ui_switch", function(){
         var checkbox = $(this);
@@ -983,9 +1059,9 @@ $(function () {
         });
         //console.log(message_nodes);
         $.each(message_nodes, function(){
-      
+
           var ui_node = this;
-      
+
           if(ui_node.type=="switch"){
             if($(checkbox).is(":checked")){
               var message = new Paho.Message(ui_node.message_on);
@@ -997,10 +1073,10 @@ $(function () {
               client.send(message);
             }
           }
-        });    
+        });
         modal("Switch: Message sent");
       });
-    
+
       //Checkbox
       $(document).on("change", ".ui_checkbox", function(){
         var checkbox = $(this);
@@ -1010,9 +1086,9 @@ $(function () {
         });
         //console.log(message_nodes);
         $.each(message_nodes, function(){
-      
+
           var ui_node = this;
-      
+
           if(ui_node.type=="checkbox"){
             if($(checkbox).is(":checked")){
               $("#checkbox_label_"+ui_node.id).css("background-color", "#"+ui_node.color);
@@ -1022,7 +1098,7 @@ $(function () {
               client.send(message);
             }else{
               $("#checkbox_label_"+ui_node.id).css("background-color", "#fff");
-              $("#checkbox_label_"+ui_node.id).css("border-color", "#c0c0c0");
+              $("#checkbox_label_"+ui_node.id).css("border-color", "#ffffff");
               var message = new Paho.Message(ui_node.message_off);
               message.destinationName = ui_node.path;
               client.send(message);
@@ -1064,7 +1140,34 @@ $(function () {
         modal("Slider: Message sent");
       });
 
+  function reloadUI() {
+      $("#client_ui").html("");
+      $.each(localDB.CLIENTS[client_array_index].UI.nodes, function(x, y) {
+          ui_style = this;
+          htmlVal = this.html;
+          ui_edit_enabled = false;
+          ui_add_element(ui_style);
 
+          $.each($(".ui_div"), function(){
+              interact(this).draggable(false);
+              interact(this).resizable(false);
+          });
+
+          if(window.innerWidth <= 600){
+              $(".ui_div").removeAttr("style");
+              $(".ui_div").attr("style", "height: 250px; width:250px");
+          }
+
+          // $.each($(".ui_div"), function () {
+          //     var node_id = $(this).data('node-id');
+          //     if(ui_style.id == node_id) {
+          //         $(this).css("transform", 'translate(' + x + 'px, ' + y + 'px)');
+          //         // $("#client_ui").html("");
+          //         // ui_add_element(ui_style);
+          //     }
+          // });
+      });
+  };
 
     // $( document ).ready(function() {
     //     console.log( "document loaded" );
@@ -1073,4 +1176,4 @@ $(function () {
     // $( window ).on( "load", function() {
     //     console.log( "window loaded" );
     // });
-});
+// });

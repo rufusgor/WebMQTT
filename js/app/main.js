@@ -32,7 +32,9 @@ function saveDB(){
     
 }
 
-
+// $(localStorage).change(function(){
+//     alert("The text has been changed.");
+// });
 //generate UUID
 function create_UUID(){
     
@@ -61,21 +63,34 @@ $(function () {
   
 switch(params.get('page')){
     case "client":
-            $("#main").load("views/client.html", function(){
-                loadClient();
-            });
+        $("#main").load("views/home.html");
         break;
     default:
-            $("#main").load("views/home.html");
+        $("#main").load("views/client.html", function(){
+            if(localDB.CLIENTS.length == 0) {
+                createNew();
+            }
+            loadClient();
+        });
     break;
 }
 
+function createNew(){
 
-  
+        var new_client = {};
+        new_client.id = create_UUID();
+        new_client.BROKER_CONNECTION = {} ;
+        new_client.UI = {};
+        new_client.UI.nodes = [];
+        localDB.CLIENTS.push(new_client);
+        saveDB();
+        window.location.reload();
+
+    };
 
   //Add new Client form submit
-  $(".form_add_client").on("submit",function(event){
-     
+$(".form_add_client").on("submit",function(event){
+
     event.preventDefault();
     var formdata = $(this).serializeArray();
     var new_client = {};
@@ -98,11 +113,11 @@ switch(params.get('page')){
 
   //Load Client to side menu
   $.each(localDB.CLIENTS, function(){
-    
+
     var client = this;
     $("#sidemenu_client_list").append(`
         <li class="nav-item">
-            <a class="nav-link btn_sidemenu_client" href="index.html?page=client&id=`+client.id+`">`+client.name+`
+            <a class="nav-link btn_sidemenu_client" href="index.html?page=client&id=`+client.id+`">`+client.BROKER_CONNECTION.broker_name+`
             <span>  <i class="btn_delete_client nav-icon badge icon-trash" data-client-id="`+client.id+`" style="color:red; display:none;"></i></span></a>
             
         </li>`);
