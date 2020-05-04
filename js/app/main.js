@@ -59,22 +59,6 @@ var params = new URLSearchParams(location.search);
 $(function () {
 
 
-  //Page load
-  
-switch(params.get('page')){
-    case "client":
-        $("#main").load("views/home.html");
-        break;
-    default:
-        $("#main").load("views/client.html", function(){
-            if(localDB.CLIENTS.length == 0) {
-                createNew();
-            }
-            loadClient();
-        });
-    break;
-}
-
 function createNew(){
 
         var new_client = {};
